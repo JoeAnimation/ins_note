@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"      
+ "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+<mapper namespace="com.sicau.ins_note.mapper.SysLogMapper">
+	<insert id="save" parameterType="com.sicau.ins_note.dataobject.SysLog">
+        insert into sys_log
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+        	 <if test="logId != null">
+                log_id,
+            </if>
+            <if test="userName != null">
+                user_name,
+            </if>
+            <if test="className != null">
+                class_name,
+            </if>
+            <if test="methodName != null">
+                method_name,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="ip != null">
+            	ip,
+            </if>
+             <if test="method != null">
+            	method,
+            </if>
+            <if test="times != null">
+                times
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+        	<if test="logId != null">
+                #{logId,jdbcType=VARCHAR},
+            </if>
+            <if test="userName != null">
+                #{userName,jdbcType=VARCHAR},
+            </if>
+            <if test="className != null">
+                #{className,jdbcType=VARCHAR},
+            </if>
+            <if test="methodName != null">
+                #{methodName,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="ip != null">
+                #{ip,jdbcType=VARCHAR},
+            </if>
+            <if test="method != null">
+            	#{method,jdbcType=VARCHAR},
+            </if>
+            <if test="times != null">
+                #{times,jdbcType=INTEGER}
+            </if>
+        </trim>
+    </insert>
+</mapper>

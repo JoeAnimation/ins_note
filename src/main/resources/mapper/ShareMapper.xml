@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.orgg//DTD Config 3.0//EN"
+"http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+<mapper namespace="com.sicau.ins_note.mapper.ShareMapper">
+<insert id="save" parameterType="com.sicau.ins_note.dataobject.Share">
+   insert into share(share_id,share_title,share_body,note_id)
+   values(#{share_id},#{share_title},#{share_body},#{note_id})
+</insert>
+<select id="findLikeTitle" parameterType="Map" resultType="com.sicau.ins_note.dataobject.Share">
+	<!-- select * from share
+	where share_title
+	like #{title} limit #{begin},3
+	 -->
+	 select * from share
+	 where share_title like CONCAT('%',#{keyWord},'%')
+	 order by share_title
+	 limit #{begin},#{pageSize}
+</select>
+<select id="findByShareId" parameterType="String" resultType="com.sicau.ins_note.dataobject.Share">
+	select * from share
+	where share_id=#{shareId}
+</select>
+<select id="findByNoteId" parameterType="String" resultType="com.sicau.ins_note.dataobject.Share">
+	select * from share
+	where note_id=#{noteId}
+</select>
+
+</mapper>

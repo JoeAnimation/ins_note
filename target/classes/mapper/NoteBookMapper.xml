@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.orgg//DTD Config 3.0//EN"
+"http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+<mapper namespace="com.sicau.ins_note.mapper.NoteBookMapper">
+	 <select id="findByUserId" parameterType="String" resultType="com.sicau.ins_note.dataobject.NoteBook">
+	   select * from notebook
+	   where user_id=#{userId}
+	   order by notebook_create_time desc
+	 </select>
+	 <insert id="save" parameterType="com.sicau.ins_note.dataobject.NoteBook">
+			insert into notebook(notebook_id,user_id,notebook_type_id,notebook_name,notebook_desc,notebook_create_time)
+			values(
+					#{notebook_id},
+					#{user_id},
+					#{notebook_type_id},
+					#{notebook_name},
+					#{notebook_desc},
+					#{notebook_create_time}
+				)
+	</insert>
+	
+	<update parameterType="com.sicau.ins_note.dataobject.NoteBook" id="updateNoteBook">
+		update notebook
+		set
+		notebook_name=#{notebook_name}
+		where notebook_id=#{notebook_id}
+	</update>
+	
+	<select parameterType="String" id="findById" resultType="com.sicau.ins_note.dataobject.NoteBook">
+		select * from notebook
+		where notebook_id=#{bookId}
+	</select>
+	
+	<delete id="deleteNoteBook" parameterType="String">
+		delete from notebook
+		where notebook_id=#{bookId}
+	</delete>
+</mapper>

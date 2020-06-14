@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.orgg//DTD Config 3.0//EN"
+"http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+<mapper namespace="com.sicau.ins_note.mapper.NoteMapper">
+ <select id="findByBookId" parameterType="String" resultType="Map">
+	  select note_id,note_title
+	  from note
+	  where notebook_id=#{bookId}
+	        and note_status_id='1'
+	        order by note_create_time desc
+ </select>
+ 
+ <update id="replayNote" parameterType="map">
+		update note
+		set notebook_id=#{bookId},
+		    note_status_id='1'
+		where note_id=#{noteId} 
+ </update>
+
+ <select id="findByNoteId" parameterType="String" resultType="com.sicau.ins_note.dataobject.Note">
+   select * from note
+   where note_id=#{noteId}
+ </select>
+ 
+ <select id="findDeleteNote" parameterType="string" resultType="map">
+		select note_id,note_title
+		from note
+		where user_id=#{userId} 
+		and note_status_id='2'
+ </select>
+ 
+  <select id="findFavorNotes" parameterType="string" resultType="map">
+		select note_id,note_title
+		from note
+		where user_id=#{userId} 
+		and note_status_id='3'
+ </select>
+
+ <select id="findFavorShareNotes" parameterType="string" resultType="map">
+		select note_id,note_title
+		from note
+		where user_id=#{userId} 
+		and note_status_id='4'
+ </select>
+ 
+ <update id="updateNote" parameterType="com.sicau.ins_note.dataobject.Note">
+	  update note
+	  set note_title=#{note_title},
+	  note_body=#{note_body},
+	  note_last_modify_time=#{note_last_modify_time}
+	  where note_id=#{note_id}
+ </update>
+ 
+ <update id="updateStatus" parameterType="string">
+	update note
+	set note_status_id='2'
+	where note_id=#{id}
+ </update>
+ 
+ <update id="updateNoteStatus" parameterType="string">
+	update note
+	set note_status_id='3'
+	where note_id=#{id}
+ </update>
+ 
+<update id="updateShareStatus" parameterType="String">
+	update note set note_status_id='4' where note_id=#{id} 
+</update>
+
+ <insert id="save" parameterType="com.sicau.ins_note.dataobject.Note">
+	   insert into note(note_id,notebook_id,user_id,note_status_id,note_type_id,note_title,note_body,note_create_time,note_last_modify_time)
+	   values(#{note_id},#{notebook_id},#{user_id},#{note_status_id},#{note_type_id},#{note_title},#{note_body},#{note_create_time},#{note_last_modify_time})
+ </insert>
+ 
+ <!-- 动态更新 -->
+<update id="dynamicUpdate" parameterType="com.sicau.ins_note.dataobject.Note">
+	update note
+	<set>
+		<if test="notebook_id!=null">
+			notebook_id=#{notebook_id},
+		</if>
+		<if test="note_status_id!=null">
+			note_status_id=#{note_status_id},
+		</if>
+		<if test="note_type_id!=null">
+	 		note_type_id=#{note_type_id},
+		</if>
+		<if test="note_title!=null">
+			note_title=#{note_title},
+		</if>
+		<if test="note_body!=null">
+			note_body=#{note_body},
+		</if>
+		<if test="note_last_modify_time!=null">
+			note_last_modify_time=#{note_last_modify_time}
+		</if>
+	</set>
+	where note_id=#{note_id}
+</update>
+<update id="updateNoteByMap" parameterType="Map">
+  update note
+  set
+  <trim suffixOverrides=",">
+	  <if test="title!=null">
+	    note_title=#{title},
+	  </if>
+	  <if test="body!=null">
+	    note_body=#{body},
+	  </if>
+	  <choose>
+	    <when test="time!=null">
+	     note_last_modify_time=#{time}
+	    </when>
+	    <otherwise>
+	     note_last_modify_time=unix_timestamp()
+	    </otherwise>
+	  </choose>
+	  where note_id=#{noteId}
+  </trim>
+</update>
+
+<delete id="deleteNotes" parameterType="Map">
+  delete from note
+  where
+  <if test="status!=null">
+   note_status_id=#{status}
+   and 
+  </if>
+  note_id in
+  <foreach collection="ids" item="id" open="(" separator="," close=")">
+   #{id}
+  </foreach>
+</delete>
+
+<delete id="deleteNoteById" parameterType="String">
+	 delete from note
+	 where note_id=#{noteId}
+</delete>
+
+<delete id="deleteNote" parameterType="com.sicau.ins_note.dataobject.Note">
+	 delete from note
+	 where note_id=#{note_id}
+	 	   and
+	 	   note_status_id='2'
+</delete>
+</mapper>

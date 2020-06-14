@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"      
+ "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+<mapper namespace="com.sicau.ins_note.mapper.RelationMapper">
+	<!-- 多个对象关联查询 -->
+	<!-- 使用两条sql语句加载数据 -->
+	<select id="findUserAndBooks" parameterType="String" resultMap="userMap">
+		select *from user where user_id=#{userId}
+	</select>
+	<resultMap id="userMap" type="com.sicau.ins_note.dataobject.User" >
+		<id property="user_id" column="user_id"/>
+		<result property="user_name" column="user_name"/>
+		<!-- 指定Books属性  javaType:返回类型 ofType： -->
+		<collection property="books" javaType="java.util.List" ofType="com.sicau.ins_note.dataobject.NoteBook" select="findBooks" column="user_id"></collection>
+	</resultMap>
+	<select id="findBooks" parameterType="String" resultType="com.sicau.ins_note.dataobject.NoteBook">
+		select * from notebook where user_id=#{userId}
+	</select>
+	
+	<!-- 使用一条sql语句加载数据  -->
+	<select id="findUserAndNoteBooks" parameterType="String" resultMap="myUserMap">
+		select * from user u join notebook b on(u.user_id=b.user_id) where u.user_id=#{userId}
+	</select>
+	<resultMap id="myUserMap" type="com.sicau.ins_note.dataobject.User" >
+		<!-- 注意：定义user字段的装载不能省略 -->
+		<id property="user_id" column="user_id"/>
+		<result property="user_name" column="user_name"/>
+		<result property="user_password" column="user_password"/>
+		<result property="user_desc" column="user_desc"/>
+		<result property="user_nick" column="user_nick"/>
+		<collection property="books" javaType="java.util.List" ofType="com.sicau.ins_note.dataobject.NoteBook" >
+			<id property="notebook_id" column="notebook_id"/>
+			<result property="user_id" column="user_id"/>
+			<result property="notebook_type_id" column="notebook_type_id"/>
+			<result property="notebook_name" column="notebook_name"/>
+			<result property="notebook_desc" column="notebook_desc"/>
+		</collection>
+	</resultMap>
+	
+	<!-- 单个对象关联查询 -->
+	<!-- 两条sql语句加载book和关联的User -->
+	<select id="findNoteBookAndUser" resultMap="bookMap">
+		select * from notebook 
+	</select>
+	<resultMap id="bookMap" type="com.sicau.ins_note.dataobject.NoteBook">
+		<association property="user" javaType="com.sicau.ins_note.dataobject.User" select="findUser" column="user_id">
+		</association>
+	</resultMap>
+	<select id="findUser" parameterType="String" resultType="com.sicau.ins_note.dataobject.User">
+		select * from user where user_id=#{id}
+	</select>
+</mapper>
